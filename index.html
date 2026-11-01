@@ -1,0 +1,525 @@
+<!doctype html>
+<html lang="en">
+<title>OmniBullet Adventurer's Handbook</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&family=Alegreya:ital,wght@0,400;0,600;0,700;1,400&family=Alegreya+Sans:wght@400;500;700&display=swap">
+<style>
+/* Layout: a guild handbook read by lantern light. One long page in chapters, sticky chapter tabs,
+   bestiary and class roster as card grids, everything else as reference tables. Single dark look on purpose. */
+:root {
+  color-scheme: dark;
+  --ink: #15121b;          /* page */
+  --vellum: #1e1a26;       /* raised surfaces */
+  --vellum-2: #282233;     /* table stripes, chips */
+  --rule: #3b3247;         /* hairlines */
+  --text: #efe4d0;         /* parchment text */
+  --muted: #b3a690;        /* captions */
+  --gold: #e2b85a;         /* the accent: OmniBullet's gold */
+  --gold-dim: #8a6d2f;
+  --danger: #ff7a6b;
+  --ok: #8fd6a0;
+  --display: 'IM Fell English SC', 'Iowan Old Style', Georgia, serif;
+  --body: 'Alegreya', 'Iowan Old Style', Georgia, serif;
+  --ui: 'Alegreya Sans', 'Segoe UI', system-ui, sans-serif;
+  --step-0: 1.05rem; --step-1: 1.25rem; --step-2: 1.6rem; --step-3: 2.2rem; --step-4: clamp(2.4rem, 6vw, 3.6rem);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 64px; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body { background: var(--ink); color: var(--text); font: 400 var(--step-0)/1.6 var(--body); margin: 0; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--ink); }
+a { color: var(--gold); }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.wrap { max-width: 1120px; margin: 0 auto; padding-block: 0; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { font-family: var(--display); font-weight: 400; text-wrap: balance; line-height: 1.15; margin: 0; }
+h2 { font-size: var(--step-3); color: var(--gold); }
+h3 { font-size: var(--step-2); }
+p { margin: 0; max-width: 68ch; }
+.lede { color: var(--muted); font-style: italic; }
+code, .cmd { font-family: var(--ui); font-weight: 700; color: var(--gold); white-space: nowrap; }
+.label { font-family: var(--ui); font-size: .78rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.num { font-variant-numeric: tabular-nums; }
+
+/* masthead */
+header.mast { border-bottom: 1px solid var(--rule); background:
+  radial-gradient(60% 120% at 85% 0%, #3a2a1255, transparent 70%), var(--ink); }
+.mast .wrap { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 24px; align-items: end; padding-block: 40px 28px; }
+.mast h1 { font-size: var(--step-4); }
+.mast h1 small { display: block; font-size: .42em; color: var(--gold); letter-spacing: .08em; margin-bottom: 6px; }
+.mast .intro { display: grid; gap: 14px; min-width: 0; }
+.mast img { width: 150px; height: auto; filter: drop-shadow(0 6px 18px #e2b85a40); }
+.ledger { display: flex; flex-wrap: wrap; gap: 8px 22px; font-family: var(--ui); color: var(--muted); }
+.ledger b { color: var(--text); font-weight: 700; }
+@media (max-width: 620px) { .mast .wrap { grid-template-columns: 1fr; } .mast img { display: none; } }
+
+/* chapter tabs */
+nav.tabs { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: #15121bf2; border-bottom: 1px solid var(--rule); backdrop-filter: blur(6px); }
+nav.tabs .wrap { display: flex; gap: 4px; overflow-x: auto; padding-block: 8px; scrollbar-width: none; }
+nav.tabs a { font-family: var(--ui); font-weight: 500; text-decoration: none; color: var(--muted); padding: 6px 12px; border-radius: 999px; white-space: nowrap; }
+nav.tabs a:hover, nav.tabs a.on { color: var(--ink); background: var(--gold); }
+
+section.chapter { padding-block: 56px 8px; display: grid; gap: 28px; }
+.chapter > header { display: grid; gap: 8px; border-bottom: 1px solid var(--rule); padding-bottom: 14px; }
+.block { display: grid; gap: 12px; align-content: start; }
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px 32px; align-items: start; }
+.cols > * { min-width: 0; }
+ul.plain { margin: 0; padding-left: 1.1em; display: grid; gap: 6px; max-width: 70ch; }
+.note { border-left: 2px solid var(--gold-dim); padding: 4px 0 4px 14px; color: var(--muted); max-width: 70ch; }
+
+/* reference tables */
+.table { overflow-x: auto; border: 1px solid var(--rule); border-radius: 6px; }
+table { border-collapse: collapse; width: 100%; font-family: var(--ui); font-size: .95rem; }
+table.wide { min-width: 600px; }
+th { text-align: left; font-weight: 500; color: var(--muted); font-size: .76rem; letter-spacing: .1em; text-transform: uppercase; padding: 10px 12px; border-bottom: 1px solid var(--rule); background: var(--vellum); }
+td { padding: 9px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+tbody tr:nth-child(even) td { background: #1a1621; }
+td.r, th.r { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* chips */
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font-family: var(--ui); font-size: .82rem; font-weight: 500; padding: 2px 9px; border-radius: 999px; background: var(--vellum-2); color: var(--text); white-space: nowrap; }
+.chip.el { color: var(--ink); font-weight: 700; }
+.chip.warn { background: #4a1f22; color: #ffc2b8; }
+.chip.gold { background: #4a3a17; color: #ffe2a0; }
+
+/* bestiary */
+.beasts { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px; }
+.beast { background: var(--vellum); border: 1px solid var(--rule); border-radius: 8px; overflow: hidden; display: grid; grid-template-rows: auto 1fr; }
+.beast .stage { aspect-ratio: 8 / 7; max-width: 100%; display: grid; place-items: end center; background:
+  radial-gradient(60% 55% at 50% 62%, var(--aura, #e2b85a) 0%, transparent 72%), #120f17; position: relative; }
+.beast .stage::after { content: ""; position: absolute; inset: 0; background: radial-gradient(120% 90% at 50% 40%, transparent 50%, #120f17 100%); pointer-events: none; }
+.beast .stage img { width: 88%; height: auto; position: relative; z-index: 1; margin-bottom: 4%; }
+.beast .stage .badge { position: absolute; top: 10px; left: 10px; z-index: 2; }
+.beast .body { padding: 14px 16px 16px; display: grid; gap: 10px; align-content: start; }
+.beast h3 { font-size: 1.45rem; }
+.beast .tag { font-family: var(--ui); font-size: .76rem; letter-spacing: .1em; color: var(--muted); }
+.beast dl { margin: 0; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 12px; font-family: var(--ui); font-size: .92rem; }
+.beast dt { color: var(--muted); }
+.beast dd { margin: 0; }
+.beast .lore { font-size: .95rem; color: var(--muted); font-style: italic; }
+.beast.locked .stage { --aura: #5a4b70; }
+.beast.locked .stage img { opacity: .9; }
+.beast.locked h3 { color: var(--muted); letter-spacing: .3em; }
+.beast.wide { grid-column: 1 / -1; grid-template-rows: none; grid-template-columns: minmax(0, 340px) minmax(0, 1fr); }
+@media (max-width: 700px) { .beast.wide { grid-template-columns: 1fr; } }
+.phases { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+
+/* classes */
+.tier { display: grid; gap: 12px; }
+.tier-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.roster { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+.job { background: var(--vellum); border: 1px solid var(--rule); border-radius: 8px; padding: 14px; display: grid; gap: 8px; align-content: start; }
+.job .top { display: flex; gap: 10px; align-items: center; }
+.job .ico { font-size: 1.6rem; line-height: 1; }
+.job h4 { margin: 0; font-family: var(--display); font-weight: 400; font-size: 1.3rem; }
+.job p { font-size: .95rem; }
+.job .req { font-family: var(--ui); font-size: .82rem; color: var(--muted); }
+
+.summons { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+.summon { background: var(--vellum); border: 1px solid var(--rule); border-radius: 8px; overflow: hidden; }
+.summon img { display: block; width: 100%; height: 170px; object-fit: contain; object-position: center bottom; background: radial-gradient(60% 60% at 50% 70%, var(--aura) 0%, transparent 75%), #120f17; }
+.summon div { padding: 12px 14px; display: grid; gap: 4px; }
+
+.legend-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+.legend { background: var(--vellum); border: 1px solid var(--gold-dim); border-radius: 8px; padding: 16px; display: grid; gap: 8px; align-content: start; }
+.legend .big { font-family: var(--display); font-size: 1.6rem; color: var(--gold); }
+footer { border-top: 1px solid var(--rule); margin-top: 56px; }
+footer .wrap { padding-block: 22px 40px; color: var(--muted); font-family: var(--ui); font-size: .9rem; display: grid; gap: 4px; }
+</style>
+
+<header class="mast">
+  <div class="wrap">
+    <div class="intro">
+      <h1><small>OmniBullet · Community Boss</small>The Adventurer's Handbook</h1>
+      <p class="lede">Everything the guild knows about the monsters that crash the stream, and how chat fights them together. Pages fill in as we defeat new monsters.</p>
+      <div class="ledger" id="ledger"></div>
+    </div>
+    <img id="hero-img" alt="OmniBullet, the spellblade">
+  </div>
+</header>
+<nav class="tabs" aria-label="Chapters"><div class="wrap" id="tabs"></div></nav>
+<main class="wrap" id="main"></main>
+<footer><div class="wrap" id="foot"></div></footer>
+
+<script id="hb-data" type="application/json">{"hpPerFighter":170,"minFighters":2,"fighterWindowMin":10,"hpGrowth":1.06,"newStreamGapHours":6,"damagePerUsd":25,"minPaidDamage":25,"followDamage":15,"encounter":{"difficulty":1.2,"summonOnDonation":true,"summonChatters":3,"summonWindowSec":180,"chatRestMin":45,"fleeAfterIdleSec":480,"fleeWarnSec":120,"lootShowSec":20,"carryOverOnFlee":1,"openingStrikeMax":0.5,"idleBob":true},"summon":{"pickByDonation":true,"bossUsd":10,"shinyUsd":20},"charge":{"enabled":true,"firstAfterSec":75,"gapSec":[90,150],"windowSec":40,"breakPct":0.2,"breakBonus":1.5,"breakBonusSec":15,"healPct":0.1},"counter":{"enabled":true,"firstSec":50,"everySec":[60,90],"koSec":60,"targets":1,"recentSec":180},"teamwork":{"enabled":true,"roleCooldownSec":90,"provokeSec":30,"tankResist":0.5,"markSec":20,"markCrit":0.15,"pierceCharges":3,"comboWindowSec":6,"comboCooldownSec":15,"ability":{"firstSec":40,"everySec":[55,85],"warnSec":12},"limit":{"fillPct":200,"windowSec":15,"need":3,"comboFill":5,"roleFill":3,"breakFill":10,"base":0.08,"perJoiner":0.05,"perRole":0.25,"maxPct":0.4,"lv2":5,"lv3":8},"ritual":{"sec":15,"need":3,"perExtra":0.25,"gaugeMax":300,"costStep":0.5},"seals":{"chance":0.35,"minLevel":20,"count":3},"combos":[{"id":"trinity","name":"TRINITY STRIKE","icon":"✦","roles":["tank","healer","dps"],"mult":1,"color":"#ffd96b","cast":["fire","ice","bolt"]},{"id":"spellblade","name":"SPELLBLADE","icon":"⚔","roles":["tank","caster"],"mult":0.6,"color":"#c08bff","cast":["slash","fire"]},{"id":"crossfire","name":"CROSSFIRE","icon":"🏹","roles":["rogue","ranged"],"mult":0.6,"color":"#ff9a3a","cast":["slash","bolt"]},{"id":"holynova","name":"HOLY NOVA","icon":"✚","roles":["healer","caster"],"mult":0.5,"color":"#fff2b0","cast":["scan","bolt"]},{"id":"shieldrush","name":"SHIELD RUSH","icon":"🛡️","roles":["tank","fighter"],"mult":0.6,"color":"#9fc4ff","cast":["slash"]},{"id":"shadowfang","name":"SHADOW FANG","icon":"🗡️","roles":["rogue","fighter"],"mult":0.6,"color":"#9a5cff","cast":["slash","omnislash"]}],"parts":{"hydra":{"regrowSec":20,"regrowPct":0.5,"list":[{"id":"fire","name":"FIRE HEAD","weak":"ice"},{"id":"ice","name":"ICE HEAD","weak":"fire"},{"id":"bolt","name":"BOLT HEAD","weak":"earth"}]}}},"bounties":{"enabled":true,"perStream":3,"personalMax":3,"personalXp":250,"personalShards":40,"clearShards":500,"clearXp":300,"titles":[{"n":10,"title":"Bounty Hunter"},{"n":40,"title":"Guild Ace"},{"n":100,"title":"Legend of the Guild"}],"community":{"wanted":{"label":"WANTED: {monster}","need":1,"shards":500,"xp":200},"slay":{"label":"Slay {need} monsters","need":8,"shards":300,"xp":150},"breaks":{"label":"BREAK {need} charge attacks","need":4,"shards":300,"xp":150},"combos":{"label":"Land {need} class combos","need":6,"shards":300,"xp":150},"limit":{"label":"Fire {need} PARTY LIMITs","need":2,"shards":400,"xp":200},"ritual":{"label":"Complete {need} summon rituals","need":2,"shards":300,"xp":150},"interrupt":{"label":"Interrupt {need} monster abilities","need":3,"shards":300,"xp":150},"roles":{"label":"Use {need} class moves","need":15,"shards":300,"xp":150},"boss":{"label":"Defeat a BOSS","need":1,"shards":400,"xp":200},"flawless":{"label":"Win a fight with nobody knocked out","need":1,"shards":400,"xp":200},"weak":{"label":"Hit weaknesses {need} times","need":30,"shards":250,"xp":150},"shatter":{"label":"Shatter {need} barriers","need":2,"shards":300,"xp":150},"speed":{"label":"Defeat a monster in under {sec}s","need":1,"sec":150,"shards":300,"xp":150}},"personal":{"hits":{"label":"Land {need} attacks","need":15},"weak":{"label":"Hit a weakness {need} times","need":5},"elements":{"label":"Use {need} different elements","need":4},"crit":{"label":"Land {need} critical hits","need":3},"skill":{"label":"Use {skill} {need} times","need":2,"classed":true},"role":{"label":"Use {move} {need} times","need":2,"classed":true},"combo":{"label":"Be part of {need} class combos","need":2,"classed":true},"limit":{"label":"Join a PARTY LIMIT","need":1},"ritual":{"label":"Join a summon ritual","need":1},"revive":{"label":"Revive an ally","need":1}}},"superboss":{"donateUsd":25,"sCraftMinPct":0.12,"chargeBase":0.25,"chargeKO":1,"strikeTargets":1,"strikeGap":1,"koSec":30},"attacks":{"cooldownSec":45,"specialCooldownSec":180,"critChance":0.1,"weakMultiplier":2,"commands":[{"cmd":"!attack","id":"attack","icon":"⚔","label":"Attack","damage":10,"color":"#ff6388"},{"cmd":"!fire","id":"fire","icon":"🔥","label":"Fire","damage":10,"color":"#ff8a2f"},{"cmd":"!ice","id":"ice","icon":"❄","label":"Ice","damage":10,"color":"#6fd8ff"},{"cmd":"!bolt","id":"bolt","icon":"⚡","label":"Bolt","damage":10,"color":"#ffe14a"},{"cmd":"!wind","id":"wind","icon":"🌪","label":"Wind","damage":10,"color":"#7fe0b0"},{"cmd":"!earth","id":"earth","icon":"🪨","label":"Earth","damage":10,"color":"#d9a15a"}]},"elements":{"attack":{"trait":""},"fire":{"trait":"burns","burnSec":10,"burnBonus":0.15},"ice":{"trait":"slows","slowSec":4,"slowMaxSec":12,"delaySec":5},"bolt":{"trait":"crits","critBonus":0.15},"wind":{"trait":"fast","cooldownSec":30,"damage":0.65},"earth":{"trait":"heavy","cooldownSec":70,"damage":1.55}},"mastery":{"enabled":true,"uses":[15,50,120],"mult":[1,1.3,1.6,2],"hpShare":0.5,"ranks":{"attack":["ATTACK","CLEAVE","SUNDER","ANNIHILATE"],"fire":["FIRE","BLAZE","INFERNO","SUPERNOVA"],"ice":["ICE","FROST","GLACIER","ABSOLUTE ZERO"],"bolt":["BOLT","THUNDER","STORM","JUDGMENT"],"wind":["WIND","GALE","CYCLONE","TEMPEST"],"earth":["EARTH","QUAKE","LANDSLIDE","TITAN'S WRATH"]}},"link":{"windowSec":8,"step":0.1,"max":1.5},"variants":{"chance":0.25,"list":[{"id":"enraged","name":"ENRAGED","tag":"ENRAGED • CHARGES OFTEN","weight":40,"hp":1.25,"chargeGap":0.6,"shards":1.3,"aura":"#ff3b3b","seen":true},{"id":"armored","name":"ARMORED","tag":"ARMORED • RESISTS PHYSICAL","weight":30,"hp":1.15,"shards":1.3,"resist":{"attack":0.5},"aura":"#c2c8cd","seen":true},{"id":"arcane","name":"ARCANE","tag":"ARCANE • RESISTS SPELLS","weight":25,"hp":1.15,"shards":1.3,"resist":{"fire":0.5,"ice":0.5,"bolt":0.5,"wind":0.5,"earth":0.5,"attack":1.5},"aura":"#b06aff","seen":true},{"id":"shiny","name":"SHINY","tag":"★ SHINY • FLEES FAST","weight":5,"hp":0.8,"shards":4,"fleeSec":120,"aura":"#ffd54a","seen":true}]},"boss":{"every":5,"hp":2.5,"shards":2,"firstChargeSec":50,"chargeGap":0.7},"rewards":[{"title":"Summon a Monster","summon":true},{"title":"Fireball","attack":"fire","damage":50},{"title":"Meteor","attack":"fire","damage":150}],"donations":{"scaleWithMonsters":true,"sCraftMinPct":0.45,"sCraftMinPctBoss":0.3},"tiers":[{"minUsd":0,"label":"Attack","word":"HIT!","sfx":"hit","fx":"normal"},{"minUsd":5,"label":"Craft","word":"CRAFT!","sfx":"critical","fx":"normal"},{"minUsd":7.5,"label":"LIMIT BREAK","word":"LIMIT BREAK!","sfx":"limit","fx":"limit","banner":"LIMIT BREAK"},{"minUsd":20,"label":"S-CRAFT","word":"S-CRAFT!","sfx":"limit","fx":"scraft","banner":"S-CRAFT"}],"value":{"bit":0.01,"twitchTier1":5,"twitchTier2":10,"twitchTier3":25,"twitchPrime":5,"youtubeMember":7.5,"youtubeGiftedMember":4,"youtubeJewel":0.01,"kickSub":5,"kickGiftedSub":5,"kick":0.01},"titles":[{"level":1,"title":"Wanderer"},{"level":3,"title":"Squire"},{"level":5,"title":"Knight"},{"level":8,"title":"Champion"},{"level":12,"title":"Hero"},{"level":20,"title":"Legend"}],"codex":{"hunter":"Monster Hunter","master":"Monster Master","champion":"Grand Champion"},"classes":{"enabled":true,"maxLevel":99,"xp":{"perAttack":10,"perUsd":50,"curve":2.7,"exp":1.84},"migrate":30,"skillCooldownSec":240,"power":0.8,"milestones":[10,25,50,75,99],"fullParty":{"need":["tank","caster","rogue","healer"],"bonus":0.15},"list":[{"id":"knight","name":"Knight","icon":"🛡️","tier":1,"role":"tank","requires":{},"passive":{"physical":0.3},"skill":{"cmd":"guard","name":"GUARD","guard":1},"desc":"physical +30%; !guard blocks the next monster strike"},{"id":"mage","name":"Mage","icon":"🔮","tier":1,"role":"caster","requires":{},"passive":{"spells":0.3,"rankSpeed":0.5},"skill":{"cmd":"overload","name":"OVERLOAD","next":{"mult":3,"filter":"spell"}},"desc":"spells +30% and rank up faster; !overload: next spell ×3"},{"id":"thief","name":"Thief","icon":"🗡️","tier":1,"role":"rogue","requires":{},"passive":{"crit":0.15},"skill":{"cmd":"steal","name":"STEAL","steal":{"pct":0.02,"min":10}},"desc":"+15% crit; !steal swipes Omni Shards once per fight"},{"id":"cleric","name":"Cleric","icon":"✚","tier":1,"role":"healer","requires":{},"passive":{"reviveAll":true,"spells":0.1},"skill":{"cmd":"bless","name":"BLESS","buff":{"pct":0.1,"sec":30}},"desc":"!revive brings back everyone for free; !bless: party +10% for 30s"},{"id":"ranger","name":"Ranger","icon":"🏹","tier":1,"role":"ranged","requires":{},"passive":{"linkStep":0.05,"hunter":0.5},"skill":{"cmd":"aim","name":"AIM","next":{"crit":true,"critMult":2.5,"filter":"any"}},"desc":"bigger link combos, +50% vs rare and Shiny; !aim: next hit is a ×2.5 crit"},{"id":"monk","name":"Monk","icon":"👊","tier":1,"role":"fighter","requires":{},"passive":{"physical":0.2,"crit":0.05,"chargeBonus":0.3},"skill":{"cmd":"flurry","name":"FLURRY","next":{"mult":2.5,"filter":"physical","breakx":2}},"desc":"physical +20%, +30% vs charging monsters; !flurry: next !attack ×2.5, counts double toward BREAK"},{"id":"paladin","name":"Paladin","icon":"⚜️","tier":2,"role":"tank","requires":{"knight":50,"cleric":50},"passive":{"physical":0.35,"reviveAll":true},"skill":{"cmd":"aegis","name":"AEGIS","guard":2,"revive":true},"desc":"physical +35%, free revive-all; !aegis blocks 2 strikes and revives everyone"},{"id":"darkknight","name":"Dark Knight","icon":"🌑","tier":2,"role":"tank","requires":{"knight":50,"mage":50},"passive":{"physical":0.35,"spells":0.2},"skill":{"cmd":"darkness","name":"DARKNESS","next":{"mult":4,"filter":"any"}},"desc":"physical +35%, spells +20%; !darkness: next hit ×4"},{"id":"sage","name":"Sage","icon":"📜","tier":2,"role":"healer","requires":{"mage":50,"cleric":50},"passive":{"spells":0.4,"reviveAll":true,"rankSpeed":0.5},"skill":{"cmd":"dualcast","name":"DUALCAST","next":{"mult":3,"filter":"spell"},"buff":{"pct":0.1,"sec":20}},"desc":"spells +40%, free revive-all; !dualcast: next spell ×3 and party +10%"},{"id":"summoner","name":"Summoner","icon":"🌀","tier":2,"role":"caster","requires":{"cleric":50,"ranger":50},"passive":{"spells":0.25,"gauge":0.5},"skill":{"cmd":"call","name":"CALL","gauge":40},"desc":"spells +25%, fills the Summon Gauge 50% faster; !call: gauge +40%"},{"id":"assassin","name":"Assassin","icon":"🔪","tier":2,"role":"rogue","requires":{"thief":50,"ranger":50},"passive":{"crit":0.2,"execute":0.6},"skill":{"cmd":"mark","name":"MARK","next":{"mult":2,"crit":true,"critMult":2.5,"filter":"any"}},"desc":"+20% crit, +60% vs monsters under 30% HP; !mark: next hit ×2 and a ×2.5 crit"},{"id":"ninja","name":"Ninja","icon":"🥷","tier":2,"role":"rogue","requires":{"thief":50,"monk":50},"passive":{"crit":0.15,"physical":0.2},"skill":{"cmd":"shadow","name":"SHADOW","next":{"mult":1.8,"filter":"any","charges":3}},"desc":"+15% crit, physical +20%; !shadow: next 3 hits ×1.8"},{"id":"dragoon","name":"Dragoon","icon":"🐉","tier":2,"role":"ranged","requires":{"ranger":50,"knight":50},"passive":{"physical":0.3,"chargeBonus":0.6},"skill":{"cmd":"jump","name":"JUMP","next":{"mult":3.5,"filter":"physical","breakx":3}},"desc":"physical +30%, +60% vs charging monsters; !jump: next !attack ×3.5, counts triple toward BREAK"},{"id":"samurai","name":"Samurai","icon":"🏯","tier":2,"role":"fighter","requires":{"monk":50,"knight":50},"passive":{"physical":0.4,"crit":0.1},"skill":{"cmd":"iaido","name":"IAIDO","next":{"mult":5,"filter":"physical"}},"desc":"physical +40%, +10% crit; !iaido: next !attack ×5"},{"id":"omniknight","name":"Omni Knight","icon":"🔱","tier":3,"role":"tank","requires":{"paladin":99,"darkknight":99},"passive":{"physical":0.5,"spells":0.3,"reviveAll":true},"skill":{"cmd":"bulwark","name":"BULWARK","guard":3,"revive":true,"buff":{"pct":0.15,"sec":30}},"desc":"physical +50%, spells +30%; !bulwark blocks 3 strikes, revives everyone, party +15%"},{"id":"astromancer","name":"Astromancer","icon":"🌠","tier":3,"role":"caster","requires":{"sage":99,"summoner":99},"passive":{"spells":0.6,"gauge":0.5,"reviveAll":true,"rankSpeed":1},"skill":{"cmd":"starfall","name":"STARFALL","next":{"mult":6,"filter":"spell"},"gauge":25},"desc":"spells +60%; !starfall: next spell ×6 and Summon Gauge +25%"},{"id":"shadowlord","name":"Shadow Lord","icon":"🦇","tier":3,"role":"rogue","requires":{"assassin":99,"ninja":99},"passive":{"crit":0.3,"execute":1,"physical":0.3},"skill":{"cmd":"eclipse","name":"ECLIPSE","next":{"mult":2.5,"crit":true,"critMult":2.5,"filter":"any","charges":3}},"desc":"+30% crit, ×2 vs monsters under 30% HP; !eclipse: next 3 hits ×2.5 crits"},{"id":"swordsaint","name":"Sword Saint","icon":"🎴","tier":3,"role":"fighter","requires":{"dragoon":99,"samurai":99},"passive":{"physical":0.7,"chargeBonus":0.8},"skill":{"cmd":"zantetsu","name":"ZANTETSU","next":{"mult":7,"filter":"physical","breakx":3}},"desc":"physical +70%; !zantetsu: next !attack ×7, counts triple toward BREAK"},{"id":"fateweaver","name":"Fateweaver","icon":"🌟","tier":4,"role":"all","requires":{"omniknight":99,"astromancer":99,"shadowlord":99,"swordsaint":99},"passive":{"physical":0.6,"spells":0.6,"crit":0.2,"reviveAll":true},"skill":{"cmd":"destiny","name":"DESTINY","buff":{"pct":0.3,"sec":30},"next":{"mult":8,"filter":"any"}},"desc":"all damage +60%, +20% crit; !destiny: party +30% and next hit ×8"}]},"mechanics":{"enabled":true,"perFight":{"normal":1,"boss":2,"chance":0.65},"regen":{"minLevel":10,"pct":0.01,"everySec":8},"barrier":{"minLevel":20,"pct":0.15,"otherDamage":0.25,"staggerSec":12,"staggerBonus":0.3},"enrage":{"minLevel":30,"atHp":0.3,"strikeFaster":0.5,"chargeFaster":0.5,"resist":0.15}},"raid":{"enabled":true,"minViewers":1,"fighterShare":0.25,"maxExtraFighters":10,"hp":1.5},"patrons":{"enabled":true,"tiers":[{"usd":10,"badge":"🥉","name":"Bronze"},{"usd":50,"badge":"🥈","name":"Silver"},{"usd":100,"badge":"🥇","name":"Gold"},{"usd":250,"badge":"💎","name":"Diamond"}]},"votes":{"sec":60,"perUsd":1},"loot":["No healing items in the next boss fight","Arts only for the next battle","Crafts only for the next battle","{mvp} picks the party for the next fight","No running from battles for 15 minutes","One character only next battle — chat picks who","Read the next 3 dialogue boxes in a dramatic voice","{mvp} picks the next side quest","Unequip all accessories for the next battle"],"rareLoot":["{mvp} picks the next game to play","{mvp} picks the party for the rest of the stream","Streamer hums the victory fanfare","Next boss fight: no items, no equipment changes"],"bossLoot":["{mvp} picks a challenge for the next 30 minutes","{mvp} renames a party member for the rest of the stream","{mvp} picks the next game segment or side quest","Streamer does the next boss fight with starter gear","Chat picks OmniBullet's battle cry for the rest of the stream"],"honors":[{"name":"mrkrabs3761","badge":"🦀","title":"The Original"}],"bossSeen":true,"hero":{"name":"OMNIBULLET","xpBase":150,"xpExp":1.6,"xpPerDamage":0.4,"killXp":0.3,"levelBonus":0.03,"shardsPerKill":0.08,"rareShards":100,"shardsPerUsd":10,"forgeVoteSec":30,"gearTiers":[{"name":"Worn","level":1,"power":0,"color":"#a8865c","glow":"#0000"},{"name":"Iron","level":5,"power":1,"cost":100,"color":"#c2c8cd","glow":"#0000"},{"name":"Steel","level":15,"power":2,"cost":250,"color":"#dfe9ff","glow":"#cfe3ff55"},{"name":"Mythril","level":30,"power":3,"cost":500,"color":"#6fe8ff","glow":"#6fe8ff88"},{"name":"Legendary","level":50,"power":4,"cost":1000,"color":"#ffd25a","glow":"#ffd96baa","layer":false},{"name":"Mythic","level":100,"power":7,"cost":2000,"color":"#ff6a7a","glow":"#ff5a6ebb","glowPx":8},{"name":"Divine","level":250,"power":10,"cost":2500,"color":"#fff4c8","glow":"#fff4c8dd","glowPx":9},{"name":"Celestial","level":500,"power":13,"cost":3000,"color":"#8fb4ff","glow":"#7fa8ffcc","glowPx":9},{"name":"Astral","level":1000,"power":16,"cost":3500,"color":"#c99bff","glow":"#c48bffcc","glowPx":10},{"name":"Eternal","level":2500,"power":19,"cost":4000,"color":"#6fefb0","glow":"#5fe8a0cc","glowPx":10},{"name":"Primordial","level":5000,"power":22,"cost":4500,"color":"#ff8a3a","glow":"#ff7a2acc","glowPx":11},{"name":"Omni","level":9999,"power":25,"cost":5000,"color":"#ffffff","glow":"#ffffffee","glowPx":12}],"refine":{"base":600,"step":150,"perTier":100,"max":5,"power":0.5},"levelCap":9999,"xpPast99":{"base":2000,"step":4},"reincarnation":{"enabled":true,"atLevel":9999,"damage":0.5,"xp":1,"voteSec":90,"keepMoves":true},"gear":{"blade":{"label":"Omniblade","physical":2,"crit":0.02},"bracers":{"label":"Bracers","spell":2},"coat":{"label":"Coat","fleeSec":60},"boots":{"label":"Boots","cooldownSec":4}},"unlocks":[{"level":3,"cmd":"!slash","id":"slash","icon":"⚔","label":"Omni Slash","damage":30,"element":"attack"},{"level":5,"cmd":"!scan","id":"scan","icon":"🔍","label":"Scan","scan":true},{"level":10,"cmd":"!omnislash","id":"omnislash","icon":"✦","label":"Omnislash","damage":50,"element":"attack"},{"level":20,"cmd":"!fate","id":"fate","icon":"☀","label":"Fate Strikes Closer","damage":80,"element":"fate"},{"level":30,"cmd":"!meteor","id":"meteor","icon":"☄","label":"Meteor","damage":60,"element":"fire","cast":["fire"],"power":3,"banner":"METEOR"},{"level":50,"cmd":"!tempest","id":"tempest","icon":"🌪","label":"Tempest","damage":90,"element":"wind","cast":["wind","bolt"],"power":3,"banner":"TEMPEST"},{"level":75,"cmd":"!cataclysm","id":"cataclysm","icon":"🌋","label":"Cataclysm","damage":120,"element":"earth","cast":["earth","fire"],"power":3,"banner":"CATACLYSM"},{"level":99,"cmd":"!omega","id":"omega","icon":"Ω","label":"Omega Bullet","damage":200,"element":"fate","cast":["fate","omnislash"],"power":3,"banner":"OMEGA BULLET"},{"level":500,"cmd":"!genesis","id":"genesis","icon":"✺","label":"Genesis","damage":300,"element":"fate","cast":["fire","ice","bolt"],"power":3,"banner":"GENESIS"},{"level":9999,"cmd":"!omniverse","id":"omniverse","icon":"∞","label":"Omniverse","damage":999,"element":"fate","cast":["fire","ice","bolt","wind","earth","fate"],"power":3,"banner":"OMNIVERSE"}],"keepUp":{"enabled":true,"edge":0.25,"maxEdge":1.6,"rateFromSec":27,"critFrom":0.19},"img":"art/omnibullet.png"},"bestiary":[{"id":"slime","name":"SLIME KING","tag":"GELATINOUS • ROYALTY","aura":"#4f8dff","weak":"fire","hp":1,"move":"ROYAL PRESS","strike":"SLIME SPLASH","intro":"A wild SLIME KING appears!","aliases":["slime","slime king"],"kind":"regular","rate":13.3,"holders":19,"img":"art/slime.png","kit":["rubber","ooze"],"parts":null},{"id":"mimic","name":"MIMIC","tag":"NOT A TREASURE CHEST","aura":"#ffb340","weak":"bolt","hp":0.8,"move":"GREEDY CHOMP","strike":"CHEST SLAM","intro":"That treasure chest was a MIMIC!","aliases":["mimic","chest"],"kind":"regular","rate":8.9,"holders":15,"img":"art/mimic.png","kit":["lockjaw","shellup"],"parts":null},{"id":"dragon","name":"ELDER DRAGON","tag":"DRAGON • BOSS","aura":"#ff5a36","weak":"ice","hp":1.6,"move":"FLAME BREATH","strike":"TAIL SWEEP","intro":"An ELDER DRAGON blocks the way!","aliases":["dragon"],"kind":"regular","rate":5.3,"holders":7,"img":"art/dragon.png","kit":["scales","roar"],"parts":null},{"id":"golem","name":"STONE GOLEM","tag":"ANCIENT CONSTRUCT","aura":"#5fe6f0","weak":"wind","hp":1.3,"move":"EARTHQUAKE","strike":"BOULDER TOSS","intro":"A STONE GOLEM awakens!","aliases":["golem"],"kind":"regular","rate":5.3,"holders":13,"img":"art/golem.png","kit":["harden","tremor"],"parts":null},{"id":"stalker","name":"STALKER","tag":"SHADOW OF THE FOREST","aura":"#9a5cff","weak":"bolt","hp":0.9,"move":"PHANTOM CLAWS","strike":"SHADOW BITE","intro":"Violet eyes in the dark… a STALKER attacks!","aliases":["stalker","wolf"],"kind":"regular","rate":6.7,"holders":16,"img":"art/stalker.png","kit":["vanish","bleed"],"parts":null},{"id":"harpy","name":"STORM HARPY","tag":"WINGED • STORMBORN","aura":"#9fd4ff","weak":"earth","hp":1,"move":"RAZOR GALE","strike":"TALON DIVE","intro":"A STORM HARPY dives out of the clouds!","aliases":["harpy"],"kind":"regular","rate":6.7,"holders":14,"img":"art/harpy.png","kit":["tailwind","screech"],"parts":null},{"id":"lich","name":"FROST LICH","tag":"UNDEAD • ICE SORCERER","aura":"#7aa8ff","weak":"fire","hp":1.2,"move":"GLACIAL CURSE","strike":"FROST NOVA","intro":"The air freezes… a FROST LICH rises!","aliases":["lich"],"kind":"regular","rate":5.3,"holders":12,"img":"art/lich.png","kit":["reflect","doom"],"parts":null},{"id":"wyrm","name":"SAND WYRM","tag":"BURROWER • DESERT TERROR","aura":"#e0a040","weak":"wind","hp":1.4,"move":"SANDSTORM MAW","strike":"SAND BURST","intro":"The ground splits… a SAND WYRM bursts out!","aliases":["wyrm","worm","sandworm"],"kind":"regular","rate":5.3,"holders":19,"img":"art/wyrm.png","kit":["burrow","blind"],"parts":null},{"id":"hydra","name":"SWAMP HYDRA","tag":"THREE-HEADED • BOG TERROR","aura":"#6fae4f","weak":"bolt","hp":1.4,"move":"VENOM TIDE","strike":"TRIPLE BITE","intro":"The bog bubbles… a SWAMP HYDRA rears all three heads!","aliases":["hydra","swamp hydra"],"kind":"regular","rate":5.3,"holders":13,"img":"art/hydra.png","kit":["regrow","poison"],"parts":{"regrowSec":20,"regrowPct":0.5,"list":[{"id":"fire","name":"FIRE HEAD","weak":"ice"},{"id":"ice","name":"ICE HEAD","weak":"fire"},{"id":"bolt","name":"BOLT HEAD","weak":"earth"}]}},{"locked":true,"kind":"regular","rate":6.2,"img":"art/locked-1.png"},{"locked":true,"kind":"regular","rate":5.3,"img":"art/locked-2.png"},{"locked":true,"kind":"regular","rate":5.3,"img":"art/locked-3.png"},{"locked":true,"kind":"regular","rate":5.3,"img":"art/locked-4.png"},{"locked":true,"kind":"regular","rate":5.3,"img":"art/locked-5.png"},{"locked":true,"kind":"regular","rate":5.3,"img":"art/locked-6.png"},{"id":"krabs","name":"MR. KRABS","tag":"🦀 LEGENDARY • THE GILDED CLAW","aura":"#ff5a3c","weak":"fire","hp":1.5,"move":"GOLDEN CRUSHER","strike":"PENNY PINCHER","intro":"MR. KRABS rises from the tide! Donations deal ×2: he can't resist money!","legendary":true,"moneyMult":2,"shell":0.5,"steal":{"pct":0.15,"min":25,"interest":1.5},"shards":2,"loot":["Treasure hoard: {mvp} picks the next game segment or side quest","Treasure hoard: {mvp} picks the party for the rest of the stream","Treasure hoard: {mvp} picks OmniBullet's next forge upgrade","Treasure hoard: streamer reads the next 3 dialogue boxes as a greedy crab captain","Treasure hoard: the next boss fight with the cheapest gear only"],"aliases":["krabs","mr krabs","mrkrabs","krab","crab","crabs"],"kind":"legendary","rate":2.7,"holders":8,"img":"art/krabs.png","kit":["harden"],"parts":null},{"id":"gilded","name":"GILDED SLIME","tag":"★ RARE • FLEES FAST","aura":"#ffd54a","weak":"attack","hp":0.5,"intro":"★ A GILDED SLIME appears! Hit it before it runs!","rare":true,"fleeSec":90,"kind":"rare","rate":2.2,"holders":3,"img":"art/gilded.png","kit":[],"parts":null}],"worldBoss":{"locked":false,"id":"bloom","name":"THE ANCIENT BLOOM","tag":"🌸 WORLD BOSS","aura":"#d0457a","weak":"fire","move":"PETAL STORM","strike":"THORN LASH","hp":10000,"intro":"The forest trembles… THE ANCIENT BLOOM awakens!","title":"Bloomslayer","rewardShards":1000,"rewardXp":3000,"awaken":{"enabled":true,"goal":150,"returnGoal":75,"perUsd":1,"perKill":3},"loot":["Legendary drop: {mvp} names the next World Boss","Legendary drop: a special event stream, chat picks the game","Legendary drop: {mvp} picks OmniBullet's next forge upgrade"],"img":"art/world-boss.png","kit":["regrow","spores"]},"superbosses":[{"id":"weissmann","name":"WEISSMANN","game":"Trails in the Sky 2nd Chapter","tag":"⚜ SUPERBOSS • TRAILS IN THE SKY SC","aura":"#7a5cff","weak":"bolt","hp":1.6,"move":"ARCANE CONVERGENCE","strike":"SAGE'S REBUKE","intro":"The air goes still… WEISSMANN steps forward to finish what he started!","title":"Angelslayer","badge":"🪽","ascendAt":0.5,"enrageAt":0.6,"kit":["genesic","exile"],"img":"art/weissmann.png","kills":2,"first":{"at":1793329157013,"mvp":"Tigereye085"},"holders":12,"form":{"id":"weissmann-angel","name":"ANGEL WEISSMANN","aura":"#d98a12","weak":"earth","move":"RADIANT JUDGEMENT","strike":"SERAPH'S WRATH","kit":["erasure","serpent","greed"],"enrageAt":0.25,"seals":true,"wipeSec":10,"hands":{"pct":0.025,"regrowSec":75,"downSec":60,"bonus":0.5,"regrowPct":0.6,"otherDamage":0.25},"img":"art/weissmann-angel.png"}}],"abilities":{"rubber":{"name":"RUBBER BODY","icon":"🫧","on":"monster","fx":"physResist","sec":40,"counter":["dispel","pierce"],"desc":"physical hits deal half"},"scales":{"name":"DRAGON SCALES","icon":"🐲","on":"monster","fx":"physResist","sec":40,"counter":["dispel","pierce"],"desc":"physical hits deal half"},"shellup":{"name":"SHELL UP","icon":"🧰","on":"monster","fx":"allResist","sec":30,"counter":["dispel","pierce"],"desc":"every hit deals half"},"harden":{"name":"HARDEN","icon":"🪨","on":"monster","fx":"allResist","sec":30,"counter":["dispel","pierce"],"desc":"every hit deals half"},"vanish":{"name":"VANISH","icon":"👻","on":"monster","fx":"vanish","sec":30,"counter":["reveal","pierce"],"desc":"half of all attacks miss"},"burrow":{"name":"BURROW","icon":"🕳","on":"monster","fx":"burrow","sec":20,"counter":["reveal","earth"],"desc":"only EARTH can reach it"},"tailwind":{"name":"TAILWIND","icon":"🌬","on":"monster","fx":"haste","sec":40,"counter":["dispel"],"desc":"it strikes twice as often"},"reflect":{"name":"SPELL REFLECT","icon":"🪞","on":"monster","fx":"reflect","sec":30,"counter":["dispel","pierce"],"desc":"spells bounce back and SILENCE the caster"},"regrow":{"name":"REGROWTH","icon":"🌿","on":"monster","fx":"regrow","sec":40,"pct":0.02,"everySec":5,"counter":["dispel","fire"],"desc":"it heals every 5s, burning stops it"},"ooze":{"name":"OOZE","icon":"🟢","on":"viewers","fx":"slow","sec":40,"targets":3,"counter":["cleanse"],"desc":"cooldowns twice as long"},"tremor":{"name":"TREMOR","icon":"〰️","on":"viewers","fx":"slow","sec":40,"targets":3,"counter":["cleanse"],"desc":"cooldowns twice as long"},"lockjaw":{"name":"LOCKJAW","icon":"🔒","on":"viewers","fx":"lock","sec":40,"targets":2,"counter":["cleanse"],"desc":"no specials or class skills"},"roar":{"name":"TERROR ROAR","icon":"😱","on":"party","fx":"fear","sec":30,"pct":0.3,"counter":["cleanse","provoke"],"desc":"everyone deals 30% less"},"bleed":{"name":"REND","icon":"🩸","on":"viewers","fx":"weaken","sec":40,"targets":3,"counter":["cleanse"],"desc":"their hits deal half"},"poison":{"name":"VENOM","icon":"☠️","on":"viewers","fx":"weaken","spread":true,"sec":45,"targets":2,"counter":["cleanse"],"desc":"hits deal half, and it spreads"},"spores":{"name":"SPORE CLOUD","icon":"🍄","on":"viewers","fx":"weaken","spread":true,"sec":45,"targets":3,"counter":["cleanse"],"desc":"hits deal half, and it spreads"},"screech":{"name":"SCREECH","icon":"📢","on":"viewers","fx":"silence","sec":30,"targets":3,"counter":["cleanse"],"desc":"no spells: only !attack works"},"doom":{"name":"DOOM","icon":"💀","on":"viewers","fx":"doom","sec":30,"targets":1,"counter":["cleanse"],"desc":"knocked out when the timer ends"},"blind":{"name":"SAND BLIND","icon":"🌫","on":"viewers","fx":"blind","sec":40,"targets":3,"counter":["cleanse"],"desc":"no crits, hits deal 20% less"},"silenced":{"name":"SILENCED","icon":"🤐","on":"viewers","fx":"silence","sec":20,"counter":["cleanse"],"desc":"no spells: only !attack works"},"genesic":{"name":"GENESIC BARRIER","icon":"🪞","on":"monster","fx":"reflect","sec":35,"counter":["dispel","pierce"],"desc":"spells bounce back and SILENCE the caster"},"exile":{"name":"DIMENSIONAL EXILE","icon":"🌀","on":"viewers","fx":"exile","sec":60,"targets":1,"counter":["interrupt"],"desc":"a fighter is banished to another dimension"},"erasure":{"name":"ERASURE","icon":"⬡","on":"viewers","fx":"erase","sec":25,"targets":3,"then":"erased","counter":["dodge","cleanse"],"desc":"three fighters are marked: !dodge before the timer ends or be ERASED"},"erased":{"name":"ERASED","icon":"⬡","on":"viewers","fx":"exile","sec":90,"counter":[],"desc":"erased from the fight"},"serpent":{"name":"SERPENT'S SPIT","icon":"🐍","on":"viewers","pick":["bleed","ooze","blind","screech"],"sec":35,"targets":3,"counter":["cleanse"],"desc":"a random curse on three fighters"},"greed":{"name":"GREED LOOP","icon":"🔁","on":"monster","fx":"allResist","sec":35,"counter":["dispel","pierce"],"desc":"the Greed Loopers feed him: every hit deals half"}},"hiddenAbilities":4,"summons":{"gaugePct":100,"donateUsd":15,"list":[{"id":"phoenix","name":"PHOENIX","icon":"🔥","color":"#ff7a2f","element":"fire","dmg":0.2,"revive":true,"desc":"revives the party","img":"art/summon-phoenix.png"},{"id":"leviathan","name":"LEVIATHAN","icon":"🌊","color":"#4fb8ff","element":"ice","dmg":0.2,"breakCharge":true,"desc":"breaks a charge","img":"art/summon-leviathan.png"},{"id":"titan","name":"TITAN","icon":"🗿","color":"#d9a15a","element":"earth","dmg":0.3,"desc":"the heaviest hit","img":"art/summon-titan.png"}]},"progress":{"savedAt":"2026-11-01T04:38:20.788Z","adventurers":26,"hero":{"level":59,"reborn":0,"gear":{"blade":4,"bracers":4,"coat":4,"boots":4},"refine":{"blade":2,"bracers":2,"coat":3,"boots":5}},"champion":{"name":"Tigereye085","week":"2026-10-19","dmg":60335},"worldBoss":{"defeated":true,"hp":0,"maxHp":10000,"slainAt":1792897862541,"meter":76.5,"heroes":[{"name":"Mystique6570","dmg":3045},{"name":"Tigereye085","dmg":2394},{"name":"DizzyBuns","dmg":2139},{"name":"jeff_gamer000","dmg":1459},{"name":"gokuisking69","dmg":963}]},"codexHolders":{"hunter":5,"master":0}},"builtAt":"2026-11-01T21:07:29Z"}</script>
+<script>
+(() => {
+const D = JSON.parse(document.getElementById('hb-data').textContent);
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+const pct = (x, d = 0) => (x * 100).toFixed(d).replace(/\.0+$/, '') + '%';
+const plus = x => '+' + pct(x);
+const n = x => Number(x).toLocaleString('en-US');
+const cmd = c => `<span class="cmd">${esc(c.startsWith('!') ? c : '!' + c)}</span>`;
+const table = (heads, rows, right = []) => `<div class="table"><table${heads.length > 3 ? ' class="wide"' : ''}><thead><tr>${heads.map((h, i) => `<th${right.includes(i) ? ' class="r"' : ''}>${h}</th>`).join('')}</tr></thead><tbody>${rows.map(r => `<tr>${r.map((c, i) => `<td${right.includes(i) ? ' class="r"' : ''}>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+
+const ELS = {}; for (const a of D.attacks.commands) ELS[a.id] = a;
+ELS.fate = { id: 'fate', icon: '☀', label: 'Fate', color: '#ffd96b' };
+ELS.physical = { id: 'physical', icon: '⚔', label: 'Physical', color: '#ff6388' };
+const el = id => { const e = ELS[id === 'attack' ? 'attack' : id] || { icon: '', label: id, color: '#ccc' };
+  return `<span class="chip el" style="background:${e.color}">${e.icon} ${esc(id === 'attack' ? 'Physical' : e.label)}</span>`; };
+const elWord = id => { const e = ELS[id] || { icon: '', label: id }; return `${e.icon} ${id === 'attack' ? 'physical' : e.label.toLowerCase()}`; };
+
+const ROLE = {
+  tank:    { name: 'Tank',    move: 'provoke',   does: 'For 30s the monster\'s strikes and curses hit only the tank. The tank gets up in half the time, curses on them last half as long, and the party\'s fear is cleared.' },
+  healer:  { name: 'Healer',  move: 'cleanse',   does: 'Removes every curse from the party, DOOM included.' },
+  caster:  { name: 'Caster',  move: 'dispel',    does: 'Strips the monster\'s buffs (scales, shells, reflect, regrowth, haste).' },
+  ranged:  { name: 'Ranged',  move: 'reveal',    does: 'Undoes VANISH and BURROW, reveals the weakness and marks the monster: +' + pct(D.teamwork.markCrit) + ' crit for everyone for ' + D.teamwork.markSec + 's.' },
+  rogue:   { name: 'Rogue',   move: 'interrupt', does: 'Stops a monster ability during its ⚠ warning, before it lands.' },
+  fighter: { name: 'Fighter', move: 'pierce',    does: 'The next ' + D.teamwork.pierceCharges + ' attacks ignore the monster\'s defenses and barriers.' },
+  all:     { name: 'Any role', move: 'any',      does: 'Can use every team move.' },
+};
+const COUNTER = { dispel: '!dispel', pierce: '!pierce', cleanse: '!cleanse', reveal: '!reveal', interrupt: '!interrupt', provoke: '!provoke', dodge: '!dodge', earth: '🪨 earth hits', fire: '🔥 burning stops it' };
+const counters = list => (list || []).length ? list.map(c => c.startsWith('!') || COUNTER[c]?.startsWith('!') ? cmd(COUNTER[c] || c) : esc(COUNTER[c] || c)).join(' or ') : '<span class="label">no counter</span>';
+
+const chapters = [];
+const chapter = (id, title, lede, html) => chapters.push({ id, title, html: `<section class="chapter" id="${id}"><header><h2>${title}</h2>${lede ? `<p class="lede">${lede}</p>` : ''}</header>${html}</section>` });
+
+/* ---------------- masthead ---------------- */
+const P = D.progress || {};
+const unlocked = D.bestiary.filter(b => !b.locked).length;
+const gearTier = i => D.hero.gearTiers[i] || D.hero.gearTiers[0];
+$('#ledger').innerHTML = [
+  `<span><b class="num">${unlocked}</b> of <b class="num">${D.bestiary.length}</b> monsters discovered</span>`,
+  P.hero ? `<span>OmniBullet <b class="num">LV ${n(P.hero.level)}</b>${P.hero.reborn ? ' ★' + P.hero.reborn : ''}</span>` : '',
+  P.adventurers ? `<span><b class="num">${P.adventurers}</b> adventurers on the roster</span>` : '',
+].join('');
+if (D.hero.img) $('#hero-img').src = D.hero.img; else $('#hero-img').remove();
+
+/* ---------------- 1. getting started ---------------- */
+const E = D.encounter;
+const A = D.attacks;
+const attackRows = A.commands.map(a => {
+  const t = D.elements[a.id] || {};
+  const cd = t.cooldownSec || A.cooldownSec;
+  const dmg = t.damage ? pct(t.damage) : '100%';
+  const what = {
+    attack: 'Physical. Boosted by the Omniblade and by physical classes.',
+    fire: `The monster burns for ${t.burnSec}s and takes ${plus(t.burnBonus)} from every hit. Burning also stops regrowth.`,
+    ice: `During a charge, each hit adds ${t.slowSec}s to the break timer (up to ${t.slowMaxSec}s). Otherwise it pushes the next charge back ${t.delaySec}s.`,
+    bolt: `${plus(t.critBonus)} crit chance.`,
+    wind: 'Fast: quicker to recharge, lighter hits. Same damage per minute.',
+    earth: 'Heavy: slow to recharge, hits hard. The only thing that reaches a burrowed monster.',
+  }[a.id] || '';
+  return [`${cmd(a.cmd)}`, `${a.icon} ${esc(t.trait || 'strike')}`, `${cd}s`, dmg, what];
+});
+const commandsAll = [
+  ['!join', 'Join the party (also counts toward summoning a monster)'],
+  ['!attack !fire !ice !bolt !wind !earth', 'Free attacks, one shared cooldown'],
+  ['!slash !omnislash !fate …', 'OmniBullet\'s special moves, once he has learned them (their own longer cooldown)'],
+  ['!revive <name>', 'Revive a knocked-out ally (spends your attack)'],
+  ['!class <name> · !classes', 'Pick a class between fights · see your class levels and next unlock'],
+  ['your class skill', 'e.g. !guard, !overload, !steal (see Classes)'],
+  ['!provoke !cleanse !dispel !reveal !interrupt !pierce', 'Team moves, one per role'],
+  ['!dodge', 'Anyone: escape ERASURE when you are marked'],
+  ['!limit', 'Start or join a PARTY LIMIT when the gauge is full'],
+  ['!summon <name> · !summon', 'Start a summon ritual · join one'],
+  ['!forge blade|bracers|coat|boots', 'Vote on OmniBullet\'s next upgrade after a victory'],
+  ['!1 !2 !3 !4', 'Vote in a story vote'],
+  ['!me · !codex · !bounty', 'Your stats and spell ranks · your Monster Codex · your personal bounty'],
+  ['!top · !top all', 'This week\'s damage race · all-time leaderboard'],
+  ['!hero · !moves · !board · !bloom · !superboss', 'OmniBullet\'s stats · his special moves · tonight\'s bounties · World Boss meter · superbosses'],
+  ['!guide · !skill <class> · !spells', 'The guide on screen · any class explained · element cheat sheet'],
+];
+chapter('start', 'Getting Started', 'Nothing is on screen until something summons a monster. Then everyone in chat can fight it, for free.', `
+<div class="cols">
+  <div class="block"><h3>How a fight starts</h3><ul class="plain">
+    <li><b>Any donation</b> summons a monster right away and lands the first hit. Name a monster in your message to pick which one (see Support).</li>
+    <li><b>Or ${E.summonChatters} different chatters</b> using any attack, ${cmd('!join')}, or following within ${E.summonWindowSec / 60} minutes.</li>
+    <li>After a fight, monsters <b>rest for ${E.chatRestMin} minutes</b>: chat can't summon again until then, so free fights stay a special event. Donations and channel-point summons still work.</li>
+  </ul></div>
+  <div class="block"><h3>How a fight ends</h3><ul class="plain">
+    <li><b>Victory:</b> loot for the party, XP and shards for OmniBullet, and the MVP gets named.</li>
+    <li><b>It flees</b> if nobody hits it for ${E.fleeAfterIdleSec / 60} minutes (OmniBullet's coat buys more time). The damage you dealt carries over to the next monster, but it can only take up to ${pct(E.openingStrikeMax)} of a new monster's HP at once.</li>
+    <li>Every monster beaten in a stream makes the next one ${plus(D.hpGrowth - 1)} tougher. It resets after ${D.newStreamGapHours} quiet hours.</li>
+  </ul></div>
+</div>
+<div class="block"><h3>Free attacks</h3>
+<p>All attacks share one cooldown per viewer (${A.cooldownSec}s; wind and earth have their own), so spamming different commands doesn't help. Every attack has a ${pct(A.critChance)} chance to crit for double damage.</p>
+${table(['Command', 'Trait', 'Cooldown', 'Damage', 'What it does'], attackRows, [2, 3])}
+</div>
+<div class="block"><h3>Every chat command</h3>
+${table(['Command', 'What it does'], commandsAll.map(([c, w]) => [c.split(' ').map(x => /^!|^</.test(x) || x === '·' || x === '…' ? (x.startsWith('!') ? cmd(x) : esc(x)) : esc(x)).join(' '), esc(w)]))}
+</div>`);
+
+/* ---------------- 2. combat ---------------- */
+const CH = D.charge, CO = D.counter, MS = D.mastery, ME = D.mechanics, B = D.boss, TW = D.teamwork;
+const rankRows = Object.entries(MS.ranks).map(([id, names]) => [`${(ELS[id] || {}).icon || ''} ${id === 'attack' ? 'Physical' : esc((ELS[id] || {}).label || id)}`, ...names.map(esc)]);
+const resistText = r => {
+  if (!r) return '—';
+  const spells = ['fire', 'ice', 'bolt', 'wind', 'earth'], e = Object.entries(r);
+  const same = spells.every(s => r[s] !== undefined && r[s] === r.fire);
+  const parts = same ? [`spells ×${r.fire}`, ...e.filter(([k]) => !spells.includes(k)).map(([k, x]) => `${k === 'attack' ? 'physical' : k} ×${x}`)]
+    : e.map(([k, x]) => `${k === 'attack' ? 'physical' : k} ×${x}`);
+  return parts.join(', ');
+};
+const varRows = D.variants.list.map(v => v.seen
+  ? [`<b>${esc(v.name)}</b>`, esc((v.tag.split('•').slice(1).join('•').trim() || v.tag).toLowerCase()), `×${v.hp}`, resistText(v.resist), v.fleeSec ? `flees in ${v.fleeSec}s` : v.chargeGap ? 'charges more often' : '—', `×${v.shards}`]
+  : ['<b>???</b>', '<span class="label">not yet seen</span>', '', '', '', '']);
+chapter('combat', 'Combat', 'What happens during a fight, and how to turn it in chat\'s favor.', `
+<div class="cols">
+  <div class="block"><h3>Weaknesses</h3><p>Every monster has a hidden weakness that takes <b>×${A.weakMultiplier} damage</b>. Chat finds it by trying different elements. Once someone hits it, it lights up in the command bar. OmniBullet's ${cmd('!scan')} reveals it, and so does a ranged class's ${cmd('!reveal')}. The bestiary below lists the ones the guild has found.</p></div>
+  <div class="block"><h3>Link chains</h3><p>Different viewers hitting within <b>${D.link.windowSec}s</b> of each other build a LINK: ${plus(D.link.step)} per link, up to ${plus(D.link.max - 1)}. Rangers add more per link. Coordinate your timing.</p></div>
+</div>
+<div class="block"><h3>Spell mastery</h3>
+<p>Each of your spells ranks up the more <i>you</i> use it: rank 2 at ${MS.uses[0]} uses, rank 3 at ${MS.uses[1]}, rank 4 at ${MS.uses[2]}. Ranks deal ${MS.mult.map(m => '×' + m).join(' / ')} and look bigger on screen. Mages rank up faster. Check yours with ${cmd('!me')}.</p>
+${table(['Element', 'Rank 1', 'Rank 2', 'Rank 3', 'Rank 4'], rankRows)}
+</div>
+<div class="cols">
+  <div class="block"><h3>Charge attacks &amp; BREAK</h3><ul class="plain">
+    <li>About ${CH.firstAfterSec}s into a fight, then every ${CH.gapSec[0]}–${CH.gapSec[1]}s, the monster winds up its signature move.</li>
+    <li>Deal <b>${pct(CH.breakPct)} of its max HP within ${CH.windowSec}s</b> to BREAK it: everyone deals ${plus(CH.breakBonus - 1)} for ${CH.breakBonusSec}s.</li>
+    <li>Miss it and the monster unleashes the move and heals ${pct(CH.healPct)}.</li>
+    <li>❄ Ice hits buy time. Monks and Dragoons hit charging monsters harder.</li>
+    <li><b>Sealed charges</b> (some charges from monster LV ${TW.seals.minLevel}): ${TW.seals.count} elements are listed on the charge, and each must hit it before it can BREAK.</li>
+  </ul></div>
+  <div class="block"><h3>Strikes &amp; knockouts</h3><ul class="plain">
+    <li>About ${CO.firstSec}s in, then every ${CO.everySec[0]}–${CO.everySec[1]}s, the monster strikes back and <b>knocks out</b> ${CO.targets} recent attacker for ${CO.koSec}s (one more in boss fights or with 5+ fighters).</li>
+    <li>Knocked-out viewers can't attack. ${cmd('!revive name')} brings them back but spends your attack. Clerics revive everyone for free.</li>
+    <li><b>Any donation revives the whole party.</b></li>
+    <li>Knights can ${cmd('!guard')} to block the next strike. Tanks can ${cmd('!provoke')} to take the hits instead.</li>
+  </ul></div>
+</div>
+<div class="block"><h3>Monster abilities</h3>
+<p>About ${TW.ability.firstSec}s into a fight, then every ${TW.ability.everySec[0]}–${TW.ability.everySec[1]}s, the monster uses one of its abilities. First comes a <b>⚠ warning lasting ${TW.ability.warnSec}s</b>, when rogues can ${cmd('!interrupt')} it. Then it lands as a buff on the monster or a curse on a few fighters. Every ability has a counter, listed in the bestiary and the ability glossary.</p>
+</div>
+<div class="cols">
+  <div class="block"><h3>Monster levels</h3><p>Monsters level up with OmniBullet and with the party's classes, and the level shows next to their name. Higher-level monsters bring extra mechanics: ${D.mechanics.perFight.normal} for a normal monster (${pct(D.mechanics.perFight.chance)} of the time), ${D.mechanics.perFight.boss} for a boss.</p>
+  ${table(['Mechanic', 'From', 'What it does'], [
+    ['♻ Regen', `LV ${ME.regen.minLevel}`, `Heals ${pct(ME.regen.pct)} every ${ME.regen.everySec}s. Burning stops it.`],
+    ['🛡 Barrier', `LV ${ME.barrier.minLevel}`, `A shield of ${pct(ME.barrier.pct)} HP that only one element breaks; other hits deal ${pct(ME.barrier.otherDamage)}. Shattering it staggers the monster: ${plus(ME.barrier.staggerBonus)} damage for ${ME.barrier.staggerSec}s.`],
+    ['😡 Enrage', `LV ${ME.enrage.minLevel}`, `Under ${pct(ME.enrage.atHp)} HP it strikes and charges faster, knocks out one more, and shrugs off ${pct(ME.enrage.resist)} of every hit.`],
+  ], [1])}</div>
+  <div class="block"><h3>Bosses</h3><p>Every <b>${B.every}th</b> random fight of a stream is a BOSS: ×${B.hp} HP, ×${B.shards} shards, charges sooner and more often, two mechanics, and better loot. Twitch raids bring a <b>RAID BOSS</b> (×${D.raid.hp} HP, sized for the raiders).</p>
+  <h3>Variants</h3><p>${pct(D.variants.chance)} of random monsters show up recoloured with a twist.</p>
+  ${table(['Variant', 'Twist', 'HP', 'Resists', 'Other', 'Shards'], varRows, [2, 5])}</div>
+</div>`);
+
+/* ---------------- 3. bestiary ---------------- */
+const kitHtml = kit => kit.length ? kit.map(id => { const a = D.abilities[id]; return a ? `<span class="chip" title="${esc(a.desc)}">${a.icon} ${esc(a.name)}</span>` : ''; }).join('') : '<span class="label">none</span>';
+const specials = m => {
+  const out = [];
+  if (m.kind === 'rare') out.push(`★ Rare: flees after ${m.fleeSec}s, never charges or strikes back, never carries damage over, and drops rare loot.`);
+  if (m.kind === 'legendary') out.push('🦀 Legendary: never a boss or a variant. Counts toward Monster Master.');
+  if (m.moneyMult) out.push(`Donations deal ×${m.moneyMult}: he can't resist money.`);
+  if (m.shell) out.push(`Shell: free attacks deal ×${m.shell} until the first BREAK cracks it.`);
+  if (m.steal) out.push(`An unbroken charge steals ${pct(m.steal.pct)} of OmniBullet's shards. Win and you get them back ×${m.steal.interest}.`);
+  if (m.shards) out.push(`×${m.shards} shards on a win.`);
+  if (m.parts) out.push(`Three heads: ${m.parts.list.map(p => `${esc(p.name)} (weak ${elWord(p.weak)})`).join(', ')}. Each hit goes to the head weak to it. Once one head falls, cut the rest within ${m.parts.regrowSec}s or the fallen heads grow back to ${pct(m.parts.regrowPct)}.`);
+  return out;
+};
+const beastCard = m => {
+  if (m.locked) return `<article class="beast locked"><div class="stage">${m.img ? `<img src="${m.img}" alt="An unknown monster's silhouette" loading="lazy">` : ''}${m.kind !== 'regular' ? `<span class="badge chip gold">${m.kind === 'rare' ? '★ Rare' : 'Legendary'}</span>` : ''}</div>
+    <div class="body"><h3>???</h3><p class="lore">Not yet defeated. Shows up in about ${m.rate}% of random fights. Beat it on stream to fill in this page.</p></div></article>`;
+  const sp = specials(m);
+  return `<article class="beast" style="--aura:${m.aura}66"><div class="stage">${m.img ? `<img src="${m.img}" alt="${esc(m.name)}" loading="lazy">` : ''}${m.kind !== 'regular' ? `<span class="badge chip gold">${m.kind === 'rare' ? '★ Rare' : '🦀 Legendary'}</span>` : ''}</div>
+  <div class="body"><div><h3>${esc(m.name)}</h3><div class="tag">${esc(m.tag)}</div></div>
+  <dl><dt>Weakness</dt><dd>${el(m.weak)}</dd>
+      <dt>HP</dt><dd class="num">×${m.hp} of a normal monster</dd>
+      <dt>Seen in</dt><dd class="num">~${m.rate}% of fights</dd>
+      ${m.move ? `<dt>Charge</dt><dd>${esc(m.move)}</dd>` : ''}
+      ${m.strike ? `<dt>Strike</dt><dd>${esc(m.strike)}</dd>` : ''}
+      ${(m.kit || []).length ? `<dt>Abilities</dt><dd class="chips">${kitHtml(m.kit)}</dd>` : ''}
+      ${(m.aliases || []).length ? `<dt>Summon it</dt><dd>${m.aliases.slice(0, 2).map(a => `“${esc(a)}”`).join(', ')}</dd>` : ''}</dl>
+  ${sp.length ? `<ul class="plain">${sp.map(s => `<li>${s}</li>`).join('')}</ul>` : ''}
+  <p class="lore">“${esc(m.intro)}”${m.holders ? ` · In ${m.holders} adventurers' codexes` : ''}</p></div></article>`;
+};
+const W = D.worldBoss;
+const worldCard = W.locked
+  ? `<article class="beast wide locked"><div class="stage">${W.img ? `<img src="${W.img}" alt="" loading="lazy">` : ''}<span class="badge chip gold">🌸 World Boss</span></div><div class="body"><h3>???</h3><p>A World Boss sleeps beneath the forest. Donations ($1 = ${W.awaken.perUsd} point) and monsters slain (${W.awaken.perKill} each) wake it. Check the meter with ${cmd('!bloom')}.</p></div></article>`
+  : `<article class="beast wide" style="--aura:${W.aura}66"><div class="stage">${W.img ? `<img src="${W.img}" alt="${esc(W.name)}" loading="lazy">` : ''}<span class="badge chip gold">🌸 World Boss</span></div>
+  <div class="body"><div><h3>${esc(W.name)}</h3><div class="tag">${esc(W.tag)}</div></div>
+  <p>The World Boss from OmniBullet's intro. It has <b class="num">${n(W.hp)} HP</b> that <b>carry over between streams</b>, so the hunt lasts several nights. When it goes quiet it retreats and comes back later with the HP it had.</p>
+  <dl><dt>Weakness</dt><dd>${el(W.weak)}</dd><dt>Charge</dt><dd>${esc(W.move)}</dd><dt>Strike</dt><dd>${esc(W.strike)}</dd><dt>Abilities</dt><dd class="chips">${kitHtml(W.kit || [])}</dd></dl>
+  <ul class="plain"><li><b>Waking it:</b> every $1 donated adds ${W.awaken.perUsd} point and every monster slain adds ${W.awaken.perKill}. At ${W.awaken.goal} it appears right after the current fight (${W.awaken.returnGoal} after a retreat). Check with ${cmd('!bloom')}.</li>
+  <li><b>Reward:</b> ${n(W.rewardShards)} shards and ${n(W.rewardXp)} XP for OmniBullet, legendary loot, and the title <b>🌸 ${esc(W.title)}</b> for everyone who hit it.</li></ul></div></article>`;
+
+const superCard = s => {
+  if (s.locked) return `<article class="job" style="grid-column:1/-1"><h4>⚜ ???</h4><p>A sealed superboss. It awakens when we finish its game on stream.</p></article>`;
+  const SB = D.superboss;
+  const phase = (p, label) => `<div class="block"><span class="label">${label}</span><h3>${esc(p.name)}</h3>
+    <dl class="beast-dl" style="display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;font-family:var(--ui);font-size:.92rem;margin:0">
+      <dt style="color:var(--muted)">Weakness</dt><dd style="margin:0">${el(p.weak)}</dd>
+      <dt style="color:var(--muted)">Charge</dt><dd style="margin:0">${esc(p.move)}</dd>
+      <dt style="color:var(--muted)">Strike</dt><dd style="margin:0">${esc(p.strike)}</dd>
+      <dt style="color:var(--muted)">Enrages at</dt><dd style="margin:0">${pct(p.enrageAt)} HP</dd>
+      <dt style="color:var(--muted)">Abilities</dt><dd style="margin:0" class="chips">${kitHtml(p.kit || [])}</dd></dl></div>`;
+  const f = s.form;
+  const formBlock = !f ? '' : f.locked ? `<div class="block"><span class="label">Phase 2</span><h3>???</h3><p class="lore">Something waits beyond ${pct(s.ascendAt)} HP.</p></div>`
+    : `${phase(f, 'Phase 2 · Ascended')}
+      <ul class="plain">${f.wipeSec ? `<li><b>Ascension:</b> at ${pct(s.ascendAt)} HP he ascends and knocks out the whole party for ${f.wipeSec}s.</li>` : ''}
+      ${f.seals ? '<li>Every charge is sealed.</li>' : ''}
+      ${f.hands ? `<li><b>The hands:</b> his shield is held up by two hands. Spells break the ARTS HAND, ${cmd('!attack')} breaks the CRAFT HAND; the wrong kind of hit does ${pct(f.hands.otherDamage)}. Break both and the shield drops for ${f.hands.downSec}s with ${plus(f.hands.bonus)} damage. A lone fallen hand grows back after ${f.hands.regrowSec}s. A PARTY LIMIT smashes both.</li>` : ''}</ul>`;
+  return `<article class="beast wide" style="--aura:${s.aura}66"><div class="stage">${s.img ? `<img src="${s.img}" alt="${esc(s.name)}" loading="lazy">` : ''}<span class="badge chip gold">⚜ Superboss</span></div>
+  <div class="body"><div><h3>${esc(s.name)}</h3><div class="tag">${esc(s.game)}</div></div>
+  <p>Always a boss: ×${s.hp} of a normal monster's HP, then the boss multiplier on top. Its knockouts last ${SB.koSec}s, and an unbroken charge knocks out a fighter instead of healing it. A $${SB.donateUsd}+ donation naming it calls a rematch.</p>
+  <div class="phases">${phase(s, 'Phase 1')}<div class="block">${formBlock}</div></div>
+  ${f && f.img ? `<img src="${f.img}" alt="${esc(f.name)}" loading="lazy" style="max-width:360px;width:100%;margin:0 auto;filter:drop-shadow(0 0 24px ${f.aura}88)">` : ''}
+  <p><b>Reward:</b> everyone who hits it in the fight that brings it down earns the title <b>${esc(s.badge)} ${esc(s.title)}</b>, kept forever.${s.kills ? ` Defeated ${s.kills} time${s.kills > 1 ? 's' : ''} so far.` : ''}</p></div></article>`;
+};
+
+const abRows = Object.entries(D.abilities).map(([id, a]) => [`${a.icon} <b>${esc(a.name)}</b>`, { monster: 'buffs the monster', viewers: `curses ${a.targets ? a.targets + ' fighter' + (a.targets > 1 ? 's' : '') : 'fighters'}`, party: 'curses everyone' }[a.on] || '', esc(a.desc), a.sec ? a.sec + 's' : '', counters(a.counter)]);
+chapter('bestiary', 'Bestiary', `Pages unlock once the community defeats a monster on stream. ${unlocked} of ${D.bestiary.length} found so far.`, `
+<div class="beasts">${D.bestiary.filter(b => !b.locked).map(beastCard).join('')}</div>
+${D.bestiary.some(b => b.locked) ? `<div class="block"><h3>Still unknown</h3><p>Nobody has defeated these yet. Their pages fill in after the first win on stream.</p>
+<div class="beasts">${D.bestiary.filter(b => b.locked).map(beastCard).join('')}</div></div>` : ''}
+<div class="block"><h3>World Boss</h3><div class="beasts">${worldCard}</div></div>
+<div class="block"><h3>Superbosses</h3><p>One for every JRPG finished on stream, with its real name and a fight modelled on the game. They never appear at random: the streamer unseals one with ${cmd('!superboss')} when the game is cleared.</p>
+<div class="beasts">${D.superbosses.map(superCard).join('')}${D.superbosses.every(s => !s.locked) ? superCard({ locked: true }) : ''}</div></div>
+<div class="block"><h3>Ability glossary</h3><p>Every monster ability the guild has seen, and how to answer it.${D.hiddenAbilities ? ` <b>${D.hiddenAbilities}</b> more belong to monsters nobody has beaten yet.` : ''}</p>
+${table(['Ability', 'Target', 'Effect', 'Lasts', 'Counter'], abRows, [3])}</div>`);
+
+/* ---------------- 4. classes ---------------- */
+const CL = D.classes;
+const byId = Object.fromEntries(CL.list.map(c => [c.id, c]));
+const reqText = c => Object.keys(c.requires || {}).length ? 'Needs ' + Object.entries(c.requires).map(([id, lv]) => `${byId[id]?.icon || ''} ${esc(byId[id]?.name || id)} LV ${lv}`).join(' + ') : 'Available to everyone';
+const jobCard = c => `<div class="job"><div class="top"><span class="ico">${c.icon}</span><div><h4>${esc(c.name)}</h4><span class="label">${esc(ROLE[c.role]?.name || c.role)} · ${c.role === 'all' ? 'every team move' : 'team move ' + esc('!' + ROLE[c.role]?.move)}</span></div></div>
+  <p>${esc(c.desc).replace(/(![a-z]+)/g, '<span class="cmd">$1</span>')}</p><div class="req">${reqText(c)}</div></div>`;
+const tiers = [[1, 'Base classes', 'Everyone starts with these six.'], [2, 'Advanced classes', 'Unlock with two base classes at LV 50.'], [3, 'Legendary classes', 'Unlock with two advanced classes at LV 99.'], [4, 'The final class', 'All four legendary classes at LV 99.']];
+const lvXp = L => Math.round(CL.xp.curve * Math.pow(L - 1, CL.xp.exp));
+chapter('classes', 'Classes', 'Every viewer picks a class. Each one has its own level from 1 to 99, a passive bonus, a skill, and a role with a team move.', `
+<div class="cols">
+  <div class="block"><h3>How classes work</h3><ul class="plain">
+    <li>Switch with ${cmd('!class name')}, only between fights. ${cmd('!classes')} shows your levels and what unlocks next.</li>
+    <li>Each attack gives your current class ${CL.xp.perAttack} XP, and each $1 donated gives it ${CL.xp.perUsd} XP. LV 50 takes about ${n(Math.round(lvXp(50) / CL.xp.perAttack))} attacks, LV 99 about ${n(Math.round(lvXp(99) / CL.xp.perAttack))}.</li>
+    <li>Passives and skills grow with the level, from 40% strength at LV 1 to full at LV 99. Skill cooldowns start at ${CL.skillCooldownSec}s and shrink 40% by LV 99.</li>
+    <li>Class passives boost your free attacks. Skills arm your next hit or help the party.</li>
+    <li><b>FULL PARTY:</b> once a tank, a caster, a rogue and a healer have all hit the same monster, everyone deals ${plus(CL.fullParty.bonus)} for the rest of the fight.</li>
+  </ul></div>
+  <div class="block"><h3>Roles &amp; team moves</h3>
+  ${table(['Role', 'Move', 'What it does'], Object.entries(ROLE).filter(([k]) => k !== 'all').map(([k, r]) => [esc(r.name), cmd(r.move), esc(r.does)]))}
+  <p class="note">Team moves share a ${TW.roleCooldownSec}s cooldown, which isn't spent if there's nothing to counter. Fateweaver can use them all.</p></div>
+</div>
+${tiers.map(([t, title, sub]) => `<div class="tier"><div class="tier-head"><h3>${title}</h3><span class="lede">${sub}</span></div><div class="roster">${CL.list.filter(c => c.tier === t).map(jobCard).join('')}</div></div>`).join('')}`);
+
+/* ---------------- 5. teamwork ---------------- */
+const LB = TW.limit, RI = TW.ritual, SM = D.summons;
+const comboRows = TW.combos.map(c => [`${c.icon} <b>${esc(c.name)}</b>`, c.roles.map(r => r === 'dps' ? 'any damage class' : esc(ROLE[r]?.name || r)).join(' + '), `${pct(c.mult)} of the hits`]);
+chapter('teamwork', 'Teamwork', 'The party is stronger together. These are the moves that need more than one person.', `
+<div class="block"><h3>Class combos</h3><p>When viewers of different classes land hits within <b>${TW.comboWindowSec}s</b> of each other, they trigger a combo for bonus damage (at most one every ${TW.comboCooldownSec}s).</p>
+${table(['Combo', 'Classes', 'Bonus damage'], comboRows, [2])}</div>
+<div class="cols">
+  <div class="block"><h3>★ Party Limit</h3><ul class="plain">
+    <li>A shared gauge that fills from damage (full after ${LB.fillPct}% of a monster's HP), plus combos (+${LB.comboFill}), BREAKs (+${LB.breakFill}) and team moves (+${LB.roleFill}). It carries over between fights.</li>
+    <li>When it's full, someone types ${cmd('!limit')} and at least ${LB.need} people join with ${cmd('!limit')} within ${LB.windowSec}s. If not enough join it fizzles but stays charged.</li>
+    <li>More people and more different roles make it bigger, up to ${pct(LB.maxPct)} of the monster's HP. ★★ at ${LB.lv2} joiners, ★★★ at ${LB.lv3}.</li>
+    <li>It always breaks a charge, shatters barriers and pierces defenses. Each role adds something: tanks guard, healers revive and cleanse, casters dispel, rogues interrupt, ranged mark.</li>
+  </ul></div>
+  <div class="block"><h3>✦ Summons</h3><ul class="plain">
+    <li>Every hit fills the shared Summon Gauge (it banks up to ${RI.gaugeMax}%).</li>
+    <li>When it's full, one viewer starts a ritual with ${cmd('!summon name')} and others join with ${cmd('!summon')} within ${RI.sec}s (${RI.need} needed). Each extra voice adds ${plus(RI.perExtra)} power.</li>
+    <li>Every extra summon in the same fight costs more (2nd ${100 + RI.costStep * 100}%, 3rd ${100 + RI.costStep * 200}%…).</li>
+    <li>A <b>$${SM.donateUsd}+ donation</b> naming a summon calls it instantly, no gauge or ritual needed.</li>
+  </ul></div>
+</div>
+<div class="summons">${SM.list.map(s => `<div class="summon" style="--aura:${s.color}66">${s.img ? `<img src="${s.img}" alt="${esc(s.name)}" loading="lazy">` : ''}<div><h4 style="margin:0;font-family:var(--display);font-weight:400;font-size:1.3rem">${s.icon} ${esc(s.name)}</h4><span>${el(s.element)}</span><span>Deals ${pct(s.dmg)} of the monster's max HP (×1.5 on its weakness) and ${esc(s.desc)}.</span><span>${cmd('!summon ' + s.id)}</span></div></div>`).join('')}</div>`);
+
+/* ---------------- 6. progression ---------------- */
+const H = D.hero;
+const specialRows = H.unlocks.map(u => [`LV ${n(u.level)}`, cmd(u.cmd), `${u.icon} ${esc(u.label)}`, u.scan ? 'reveals the weakness' : `${u.damage} base damage`]);
+const tierRows = H.gearTiers.map(t => [`<span style="color:${t.color};font-weight:700">${esc(t.name)}</span>`, `LV ${n(t.level)}`, t.cost ? n(t.cost) + ' ◆' : '—', t.power]);
+const gearRows = Object.entries(H.gear).map(([slot, g]) => [esc(g.label), esc({ blade: `+${g.physical} physical damage and +${pct(g.crit)} crit per tier`, bracers: `+${g.spell} spell damage per tier`, coat: `monsters wait ${g.fleeSec}s longer before fleeing, per tier`, boots: `chat cooldowns ${g.cooldownSec}s shorter per tier` }[slot] || '')]);
+const B2 = D.bounties;
+const titleRows = D.titles.map(t => [esc(t.title), `party LV ${t.level}`]);
+chapter('progression', 'Progression', 'What carries over from stream to stream: OmniBullet himself, and every adventurer\'s titles.', `
+<div class="cols">
+  <div class="block"><h3>OmniBullet levels up</h3><ul class="plain">
+    <li>He earns XP from all the damage chat deals (${H.xpPerDamage} per point) plus a kill bonus. The cap is LV ${n(H.levelCap)}.</li>
+    <li>Each level makes chat's moves ${plus(H.levelBonus)} stronger. Monsters keep up with him, so fights stay fights; his growth only makes them a little quicker.</li>
+    <li>At LV ${n(H.reincarnation.atLevel)} chat votes on <b>reincarnation</b>: back to LV 1 with a ★, keeping all gear and moves, plus ${plus(H.reincarnation.damage)} damage and ${plus(H.reincarnation.xp)} XP forever.</li>
+  </ul>
+  <h3>Special moves</h3><p>Once he learns them, everyone in chat can use these. They share a ${A.specialCooldownSec}s cooldown per viewer.</p>
+  ${table(['Learned at', 'Command', 'Move', 'Effect'], specialRows)}</div>
+  <div class="block"><h3>The forge</h3><ul class="plain">
+    <li>Kills and donations earn <b>Omni Shards</b> (${H.shardsPerUsd} per $1). After a victory with enough shards, chat has ${H.forgeVoteSec}s to vote with ${cmd('!forge blade')}, <span class="cmd">bracers</span>, <span class="cmd">coat</span> or <span class="cmd">boots</span>.</li>
+    <li>Each tier needs OmniBullet's level. From Legendary on, a tier is refined +1 to +${H.refine.max} before the next one.</li>
+  </ul>
+  ${table(['Slot', 'What a tier adds'], gearRows)}
+  ${table(['Tier', 'Needs', 'Cost', 'Power'], tierRows, [1, 2, 3])}</div>
+</div>
+<div class="cols">
+  <div class="block"><h3>Titles</h3><p>Your title shows on your party chip and in ${cmd('!me')}. The highest one you hold is shown: Grand Champion, then an honor title, then a slayer title, then a Codex or Bounty title, then your rank.</p>
+  ${table(['Rank (by total damage)', 'Needs'], titleRows, [1])}
+  <ul class="plain"><li><b>🏆 ${esc(D.codex.champion)}:</b> every Monday, the top damage dealer of last week's race (${cmd('!top')}) is crowned.</li>
+  <li><b>📖 ${esc(D.codex.hunter)}:</b> defeat every regular monster. <b>${esc(D.codex.master)}:</b> also the rare and legendary ones, every variant and a boss. Codex titles are permanent. Check yours with ${cmd('!codex')}.</li>
+  <li><b>Slayer titles</b> (🌸 Bloomslayer, ⚜ superboss titles): for everyone who hits the World Boss or a superboss in the fight that brings it down.</li></ul></div>
+  <div class="block"><h3>📜 Bounty Board</h3><ul class="plain">
+    <li>Every stream posts ${B2.perStream} community bounties (${cmd('!board')}). One is always a <b>WANTED</b> monster, which donors can call by name.</li>
+    <li>Each one completed gives OmniBullet shards and every fighter that night class XP. Clearing the board adds +${B2.clearShards} ◆ and +${B2.clearXp} XP.</li>
+    <li>Everyone also gets personal bounties, one at a time and up to ${B2.personalMax} a stream (${cmd('!bounty')}): +${B2.personalXp} class XP each.</li>
+  </ul>
+  ${table(['Bounty title', 'Bounties done'], B2.titles.map(t => [esc(t.title), t.n]), [1])}
+  <h3>Patrons</h3><p>Lifetime supporters get a badge on their party chip.</p>
+  ${table(['Badge', 'Tier', 'Total support'], D.patrons.tiers.map(t => [t.badge, esc(t.name), '$' + t.usd]), [2])}</div>
+</div>`);
+
+/* ---------------- 7. support ---------------- */
+const V = D.value, S = D.summon;
+const tierDesc = { Attack: 'a hit', Craft: 'a spell of a random element', 'LIMIT BREAK': 'a bigger spell with a banner', 'S-CRAFT': `all three elements at full power; always takes at least ${pct(D.donations.sCraftMinPct)} of a monster's HP (${pct(D.donations.sCraftMinPctBoss)} of a boss)` };
+const tierRows2 = D.tiers.map((t, i) => [`$${t.minUsd}${D.tiers[i + 1] ? '–' + (D.tiers[i + 1].minUsd) : '+'}`, `<b>${esc(t.label)}</b>`, esc(tierDesc[t.label] || '')]);
+const valueRows = [
+  ['100 bits', '$' + (100 * V.bit)], ['Twitch sub (Tier 1 / Prime)', '$' + V.twitchTier1], ['Twitch Tier 2 / Tier 3', `$${V.twitchTier2} / $${V.twitchTier3}`],
+  ['YouTube member', '$' + V.youtubeMember], ['Gifted YouTube membership', '$' + V.youtubeGiftedMember], ['Kick sub / gifted sub', `$${V.kickSub} / $${V.kickGiftedSub}`], ['100 KICKs', '$' + (100 * V.kick)],
+];
+chapter('support', 'Support', 'Free attacks win fights, and support speeds them up. Every way of supporting the stream does something in the game.', `
+<div class="cols">
+  <div class="block"><h3>Donations hit hard</h3><ul class="plain">
+    <li><b>$1 = ${D.damagePerUsd} damage</b> (a free attack does about 10). Donation damage grows with the night's monsters, so it never falls behind.</li>
+    <li>Any donation <b>revives the whole party</b>, and one when nothing is on screen <b>summons a monster</b>.</li>
+    <li>A new follow or YouTube subscribe hits for ${D.followDamage}.</li>
+  </ul>
+  ${table(['Amount', 'Attack', 'What it does'], tierRows2)}</div>
+  <div class="block"><h3>What everything counts as</h3>${table(['Support', 'Counts as'], valueRows, [1])}
+  <p class="note">Super Chats, cheers, tips and Ko-fi all count. Other currencies are converted to dollars.</p></div>
+</div>
+<div class="block"><h3>Name it in your message</h3>
+${table(['Write…', 'With', 'What happens'], [
+  ['a monster\'s name (“dragon”, “krabs”…)', 'any donation', 'Summons that monster now, or puts it next in line (first come, first served). Rare monsters can\'t be picked.'],
+  ['a variant (“armored dragon”)', 'any donation', 'Summons that version'],
+  ['“boss” + a monster', `$${S.bossUsd}+`, 'Makes it a BOSS fight'],
+  ['“shiny” + a monster', `$${S.shinyUsd}+`, 'Makes it a Shiny one'],
+  ['phoenix / leviathan / titan', `$${D.summons.donateUsd}+`, 'Calls that summon instantly'],
+  ['an unsealed superboss', `$${D.superboss.donateUsd}+`, 'Calls a superboss rematch'],
+])}</div>
+<div class="cols">
+  <div class="block"><h3>Also counts</h3><ul class="plain">
+    ${D.rewards.length ? `<li><b>Channel points</b> (Twitch/Kick): ${D.rewards.map(r => `“${esc(r.title)}”`).join(', ')}.</li>` : ''}
+    <li><b>The World Boss meter:</b> every $1 wakes the World Boss a little more.</li>
+    <li><b>Story votes:</b> donating during a vote adds ${D.votes.perUsd} extra vote per $1 to your pick.</li>
+    <li><b>Class XP:</b> each $1 adds ${D.classes.xp.perUsd} XP to your current class.</li>
+    <li><b>Mr. Krabs</b> takes ×2 from donations.</li>
+  </ul></div>
+  <div class="block"><h3>Loot</h3><p>When a monster falls, the party wins a challenge for the game being played. A sample:</p>
+  <ul class="plain">${D.loot.slice(0, 5).map(l => `<li>${esc(l.replace('{mvp}', 'the MVP'))}</li>`).join('')}</ul></div>
+</div>`);
+
+/* ---------------- 8. hall of legends ---------------- */
+const fmtDate = ms => new Date(ms).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+const legends = [];
+if (P.champion) legends.push(`<div class="legend"><span class="label">Reigning ${esc(D.codex.champion)}</span><span class="big">🏆 ${esc(P.champion.name)}</span><span>Won the week of ${esc(P.champion.week)} with <span class="num">${n(P.champion.dmg)}</span> damage.</span></div>`);
+if (P.worldBoss?.defeated) legends.push(`<div class="legend"><span class="label">World Boss slain</span><span class="big">🌸 ${esc(W.name || 'The World Boss')}</span><span>Fell ${P.worldBoss.slainAt ? 'on ' + fmtDate(P.worldBoss.slainAt) : ''}. Bloomslayers: ${P.worldBoss.heroes.map(h => esc(h.name)).join(', ')}.</span></div>`);
+for (const s of D.superbosses) if (!s.locked && s.first?.mvp) legends.push(`<div class="legend"><span class="label">First superboss clear</span><span class="big">${esc(s.badge)} ${esc(s.name)}</span><span>First defeated on ${fmtDate(s.first.at)}, MVP ${esc(s.first.mvp)}. ${s.holders} adventurers hold the title ${esc(s.title)}.</span></div>`);
+if (P.codexHolders?.hunter) legends.push(`<div class="legend"><span class="label">Monster Codex</span><span class="big">📖 ${P.codexHolders.hunter} ${esc(D.codex.hunter)}${P.codexHolders.hunter > 1 ? 's' : ''}</span><span>${P.codexHolders.master ? P.codexHolders.master + ' ' + esc(D.codex.master) + '.' : 'Nobody has completed the full Monster Master codex yet.'}</span></div>`);
+for (const h of D.honors || []) if (h.name) legends.push(`<div class="legend"><span class="label">Honored adventurer</span><span class="big">${esc(h.badge)} ${esc(h.name)}</span><span>“${esc(h.title)}”, with us since the Kingdom Hearts marathon. The legendary Mr. Krabs is named in his honor.</span></div>`);
+if (legends.length) chapter('legends', 'Hall of Legends', 'Deeds the guild remembers.', `<div class="legend-grid">${legends.join('')}</div>`);
+
+/* ---------------- render ---------------- */
+$('#main').innerHTML = chapters.map(c => c.html).join('');
+$('#tabs').innerHTML = chapters.map(c => `<a href="#${c.id}" data-id="${c.id}">${c.title}</a>`).join('');
+const upd = P.savedAt ? new Date(P.savedAt) : new Date(D.builtAt);
+$('#foot').innerHTML = `<span>Progress as of ${upd.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}. Numbers come straight from the game's settings.</span><span>Questions? Ask in chat, or type <span class="cmd">!guide</span> on stream.</span>`;
+const links = [...document.querySelectorAll('#tabs a')];
+const io = 'IntersectionObserver' in window ? new IntersectionObserver(es => {
+  for (const e of es) if (e.isIntersecting) for (const a of links) a.classList.toggle('on', a.dataset.id === e.target.id);
+}, { rootMargin: '-40% 0px -55% 0px' }) : null;
+if (io) for (const c of chapters) io.observe(document.getElementById(c.id));
+if (location.hash) document.getElementById(location.hash.slice(1))?.scrollIntoView();
+})();
+</script>
+
+</html>
