@@ -603,7 +603,7 @@ ${table(['Write…', 'With', 'What happens'], [
     ? [['“boss”', `$${S.bossUsd}+`, 'Calls one of the dedicated bosses'], ['a boss\'s name (“deadline”…)', `$${D.bossTier.donateUsd}+`, 'Calls that boss']]
     : [['“boss” + a monster', `$${S.bossUsd}+`, 'Makes it a BOSS fight']]),
   ['“shiny” + a monster', `$${S.shinyUsd}+`, 'Makes it a Shiny one'],
-  ...[1, 2, 3].map(t => D.summons.list.filter(s => (s.tier || 2) === t)).filter(l => l.length).map(l => [l.map(s => s.name.toLowerCase()).join(' / '), `$${l[0].donateUsd || D.summons.donateUsd}+`, `Calls that ${'★'.repeat(t)} summon instantly${t === 3 ? ' (once the guild has unlocked it)' : ''}`]),
+  ...[1, 2, 3].map(t => D.summons.list.filter(s => (s.tier || 2) === t)).filter(l => l.length).map(l => [l.map(s => s.name.toLowerCase()).join(' / '), `$${l[0].donateUsd || D.summons.donateUsd}+`, `Calls that ${'★'.repeat(l[0].tier || 2)} summon instantly${(l[0].tier || 2) === 3 ? ' (once the guild has unlocked it)' : ''}`]),
   ['an unsealed superboss', `$${D.superboss.donateUsd}+`, 'Calls a superboss rematch'],
 ])}</div>
 <div class="cols">
